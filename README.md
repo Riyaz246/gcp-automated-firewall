@@ -1,4 +1,4 @@
-# Project 3: Automated Threat Intelligence Firewall
+# Automated Threat Intelligence Firewall
 
 This project builds a fully automated security response system. It simulates how a SecOps team would automatically ingest third-party threat intelligence (a list of "bad" IPs) and programmatically update the cloud network firewall to block those threats.
 
