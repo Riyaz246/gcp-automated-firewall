@@ -43,3 +43,19 @@ I ran the scheduler job manually to test the end-to-end system. The Cloud Functi
 * **ML for Anomaly Detection:** Instead of just trusting a public list, I would log all *denied* traffic from this rule to BigQuery. I would then build a **Vertex AI Anomaly Detection** model to find:
     * Which of my *internal* VMs are trying to *talk to* the blocklist most often? (This VM is likely compromised).
     * Are there *new* IPs (not on my list) that are attacking me in a similar way? This could be an emerging, unknown threat.
+
+
+graph TD
+    subgraph External
+        Threat_Intel[Threat Intelligence Feed URL]
+    end
+    
+    subgraph Google Cloud Project
+        Scheduler[Cloud Scheduler (Daily)] --> Function[Cloud Function (Python)]
+        Function -- HTTP GET --> Threat_Intel
+        Function -- Uses --> SA[Service Account (compute.firewalls.update)]
+        SA -- Authenticates --> API[Compute Engine API]
+        Function -- Calls API to Patch --> API
+        API -- Updates --> Firewall[VPC Firewall Rule (Deny-List)]
+        Firewall -- Protects --> VPC[VPC Network (VMs, GKE)]
+    end
